@@ -1,6 +1,7 @@
 @(currentUser: femr.common.dtos.CurrentUser, viewModel: femr.ui.models.pharmacy.EditViewModelGet, searchError: java.lang.Boolean )
 
 @import femr.ui.controllers.routes.PharmaciesController
+@import femr.ui.controllers.routes.SearchController
 @import femr.ui.views.html.layouts.main
 @import femr.ui.views.html.partials.search
 @import femr.ui.views.html.partials.patientOverview
@@ -96,11 +97,14 @@
                     The patient was counseled on the risks and side effects of the medications dispensed.</label>
                 <input type="checkbox" name="disclaimer" value="1" />
                 <input type="hidden" name="disclaimer" value="0" />
+
             </div>
             <div id="submitWrap">
                 <button type="submit" id="pharmacySubmitBtn" class="fButton fRedButton fSubmitButton pull-right">
                     Submit</button>
+                <button type="submit" id="medicalButton" name="navigateToMedical" class="fButton fOtherButton pull-left">Medical</button>
             </div>
+
 
         </div>
 

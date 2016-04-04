@@ -157,7 +157,10 @@ public class PharmaciesController extends Controller {
     }
 
     public Result editPost(int id) {
-
+        String[] postAction = request().body().asFormUrlEncoded().get("navigateToMedical");
+        if (postAction != null){
+            return redirect(routes.MedicalController.editGet(id));
+        }
         CurrentUser currentUserSession = sessionService.retrieveCurrentUserSession();
 
         // If form errors exist
@@ -245,6 +248,7 @@ public class PharmaciesController extends Controller {
                 }
             }
         }
+
 
         // dispense the prescriptions! then inventory them!
         if (prescriptionsToDispense.size() > 0) {
