@@ -39,7 +39,7 @@ var problemFeature = {
 var prescriptionFeature = {
     medicationTypeaheadData: [],
     administrationTypeaheadData: [],
-    allPrescriptions: $('.newPrescriptionsContainer').find('.prescriptionRow'),
+    allPrescriptions: $('.prescriptionWrap').find('.prescriptionRow'),
     refreshSelectors: function () {
         prescriptionFeature.allPrescriptions = $(prescriptionFeature.allPrescriptions.selector);
     },
@@ -67,28 +67,29 @@ var prescriptionFeature = {
     },
     // Only adds typeahead to the last prescription row
     addMedicationTypeahead: function() {
-        var $element = prescriptionFeature.allPrescriptions.last().find(".medicationName");
-        $element.typeahead({ hint: true, highlight: true },
-            {
-                displayKey: 'value',
-                name: "medications",
-                minLength: 0,
-                source: prescriptionFeature.medicationTypeaheadMatcher(prescriptionFeature.medicationTypeaheadData),
-                templates: {
-                //    suggestion: Handlebars.compile("<div>{{value}} {{#each ingredients}}<div class='medication_ingredient'>{{name}} {{value}}{{unit}}</div>{{/each}}</div>")
-                }
-            }).on('typeahead:selected', function(event, item) {
+        prescriptionFeature.allPrescriptions.find(".medicationName").filter(":not(.tt-hint, .tt-input)").each(function(_, elem) {
+            $(elem).typeahead({hint: true, highlight: true},
+                {
+                    displayKey: 'value',
+                    name: "medications",
+                    minLength: 0,
+                    source: prescriptionFeature.medicationTypeaheadMatcher(prescriptionFeature.medicationTypeaheadData),
+                    templates: {
+                        //    suggestion: Handlebars.compile("<div>{{value}} {{#each ingredients}}<div class='medication_ingredient'>{{name}} {{value}}{{unit}}</div>{{/each}}</div>")
+                    }
+                }).on('typeahead:selected', function (event, item) {
                 // triggered when an item is selected from the dropdown list in autocompleted
                 var $medicationID = $(this).closest(".prescriptionRow").find(".medicationID");
                 $medicationID.val(item.id);
-            }).on('typeahead:autocompleted', function(event, item, data) {
-                // triggered when an item is tabbed to completion
-                $(this).trigger("typeahead:selected", item);
-            }
-        ).on("change", function(event) {
+            }).on('typeahead:autocompleted', function (event, item, data) {
+                    // triggered when an item is tabbed to completion
+                    $(this).trigger("typeahead:selected", item);
+                }
+            ).on("change", function (event) {
                 // triggered when text is entered that is not part of the autocomplete
                 var $medicationID = $(this).closest(".prescriptionRow").find(".medicationID");
                 $medicationID.val("");
+            });
         });
     },
     setupNewPrescriptionRow: function(skipTypeahead) {
@@ -96,13 +97,16 @@ var prescriptionFeature = {
         prescriptionFeature.refreshSelectors();
 
         /* Setup calculate to days input on keyup/change events - both administration and days change */
-        prescriptionFeature.allPrescriptions.last().find(".prescriptionAdministrationDays > input").on("keyup change",
-            prescriptionFeature.calculateTotalPrescriptionAmount
-        );
-        prescriptionFeature.allPrescriptions.last().find(".prescriptionAdministration > select").on("change",
-            prescriptionFeature.calculateTotalPrescriptionAmount
-        );
-
+        prescriptionFeature.allPrescriptions.find(".prescriptionAdministrationDays > input").each(function(_, elem) {
+            $(elem).on("keyup change",
+                prescriptionFeature.calculateTotalPrescriptionAmount
+            );
+        });
+        prescriptionFeature.allPrescriptions.find(".prescriptionAdministration > select").each(function(_, elem) {
+            $(elem).on("change",
+                prescriptionFeature.calculateTotalPrescriptionAmount
+            );
+        });
         if (skipTypeahead !== true) {
             prescriptionFeature.addMedicationTypeahead();
         }
@@ -153,13 +157,9 @@ var prescriptionFeature = {
         prescriptionFeature.refreshSelectors();
         var lastPrescription = $(prescriptionFeature.allPrescriptions).last();
         if ($(prescriptionFeature.allPrescriptions).size() > 1) {
-            if (!$(lastPrescription).is('[readonly]')) {
-                $(lastPrescription).remove();
-            }
+            $(lastPrescription).remove();
         } else {
-            if (!$(lastPrescription).is('[readonly]')) {
-                $(lastPrescription).val('');
-            }
+            $(lastPrescription).val('');
         }
 
     }

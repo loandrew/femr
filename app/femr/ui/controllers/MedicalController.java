@@ -335,9 +335,18 @@ public class MedicalController extends Controller {
         //create patient encounter photos
         photoService.createEncounterPhotos(request().body().asMultipartFormData().getFiles(), patientEncounterItem, viewModelPost);
 
+        ServiceResponse<List<PrescriptionItem>> oldPrescriptionsResponse = medicationService.retrieveAllPrescriptionsForPatient(patientId);
+        Map<Integer, Integer> replacementPrescriptions = new TreeMap<>();
+        List<PrescriptionItem> oldPrescriptions = oldPrescriptionsResponse.getResponseObject();
+        for(int i = 0; i < oldPrescriptions.size(); i++){
+            replacementPrescriptions.put(oldPrescriptions.get(i).getId(), viewModelPost.getPrescriptions().get(i).getId());
+        }
+        medicationService.replacePrescriptions(replacementPrescriptions);
+
         //get the prescriptions that have an ID (e.g. prescriptions that exist in the dictionary).
         List<PrescriptionItem> prescriptionItemsWithID = viewModelPost.getPrescriptions()
                 .stream()
+                .skip(oldPrescriptions.size())
                 .filter(prescription -> prescription.getMedicationID() != null)
                 .collect(Collectors.toList());
 
@@ -363,6 +372,7 @@ public class MedicalController extends Controller {
         // also ignore new new prescriptions that do not have a name
         List<PrescriptionItem> prescriptionItemsWithoutID = viewModelPost.getPrescriptions()
                 .stream()
+                .skip(oldPrescriptions.size())
                 .filter( prescription -> prescription.getMedicationID() == null )
                 .filter( prescription -> StringUtils.isNotNullOrWhiteSpace( prescription.getMedicationName() ) )
                 .collect(Collectors.toList());

@@ -23,6 +23,7 @@ import femr.common.dtos.ServiceResponse;
 import femr.common.models.MedicationAdministrationItem;
 import femr.common.models.MedicationItem;
 import femr.common.models.PrescriptionItem;
+import femr.data.models.core.IPatientPrescription;
 
 import java.util.List;
 import java.util.Map;
@@ -144,4 +145,9 @@ public interface IMedicationService {
      * and/or errors if they exist
      */
     ServiceResponse<ObjectNode> retrieveAllMedicationsWithID();
+
+    /*
+     * Retrieves a list of all prescriptions in the system for a patient
+     */
+    ServiceResponse<List<PrescriptionItem>> retrieveAllPrescriptionsForPatient(int patientID);
 }

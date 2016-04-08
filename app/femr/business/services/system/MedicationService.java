@@ -642,4 +642,35 @@ public class MedicationService implements IMedicationService {
 
         return response;
     }
+    public ServiceResponse<List<PrescriptionItem>> retrieveAllPrescriptionsForPatient(int patientID) {
+        ServiceResponse<List<PrescriptionItem>> response = new ServiceResponse<>();
+
+        try {
+            List<PrescriptionItem> prescriptionItems = new ArrayList<>();
+
+            Query<PatientPrescription> prescriptionQuery = QueryProvider.getPatientPrescriptionQuery()
+                    .where()
+                    .eq("user_id", patientID).orderBy("id");
+            List<? extends IPatientPrescription> prescriptions = patientPrescriptionRepository.find(prescriptionQuery);
+
+            for (IPatientPrescription m : prescriptions) {
+                prescriptionItems.add(itemModelMapper.createPrescriptionItem(
+                    m.getId(),
+                    m.getMedication().getName(),
+                    null,
+                    m.getPhysician().getFirstName(),
+                    m.getPhysician().getLastName(),
+                    m.getMedicationAdministration(),
+                    m.getAmount(),
+                    m.getMedication(),
+                    null,
+                    m.isCounseled())
+                );
+            }
+            response.setResponseObject(prescriptionItems);
+        } catch (Exception ex) {
+            response.addError("exception", ex.getMessage());
+        }
+        return response;
+    }
 }
