@@ -40,7 +40,7 @@
         <input class='medicationID' name='prescriptions[@index].medicationID' value='@script.getMedicationID' type='hidden' />
 
         <span class="prescription-field prescriptionName">
-            <input type='text' name="prescriptions[@index].medicationName" class='medicationName form-control input-sm' value="@script.getName (@outputStringOrNA(script.getMedicationForm).toString().trim())" />
+            <input type='text' name="prescriptions[@index].medicationName" class='medicationName form-control input-sm existing' value="@script.getName (@outputStringOrNA(script.getMedicationForm).toString().trim())" />
         </span>
         <span class="prescription-field prescriptionAdministration">
 

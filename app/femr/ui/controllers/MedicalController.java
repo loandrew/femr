@@ -335,11 +335,14 @@ public class MedicalController extends Controller {
         //create patient encounter photos
         photoService.createEncounterPhotos(request().body().asMultipartFormData().getFiles(), patientEncounterItem, viewModelPost);
 
+        //get old prescriptions
         ServiceResponse<List<PrescriptionItem>> oldPrescriptionsResponse = medicationService.retrieveAllPrescriptionsForPatient(patientId);
-        Map<Integer, Integer> replacementPrescriptions = new TreeMap<>();
+        List<PrescriptionItem> newPrescriptions = viewModelPost.getPrescriptions();
         List<PrescriptionItem> oldPrescriptions = oldPrescriptionsResponse.getResponseObject();
+
+        Map<Integer, Integer> replacementPrescriptions = new TreeMap<>();
         for(int i = 0; i < oldPrescriptions.size(); i++){
-            replacementPrescriptions.put(oldPrescriptions.get(i).getId(), viewModelPost.getPrescriptions().get(i).getId());
+            replacementPrescriptions.put(oldPrescriptions.get(i).getId(), newPrescriptions.get(i).getId());
         }
         medicationService.replacePrescriptions(replacementPrescriptions);
 

@@ -157,9 +157,13 @@ var prescriptionFeature = {
         prescriptionFeature.refreshSelectors();
         var lastPrescription = $(prescriptionFeature.allPrescriptions).last();
         if ($(prescriptionFeature.allPrescriptions).size() > 1) {
-            $(lastPrescription).remove();
+            if (!$(lastProblem).is('[existing]')) {
+                $(lastPrescription).remove();
+            }
         } else {
-            $(lastPrescription).val('');
+            if (!$(lastProblem).is('[existing]')) {
+                $(lastPrescription).val('');
+            }
         }
 
     }
